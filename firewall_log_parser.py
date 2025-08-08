@@ -2,11 +2,7 @@
 
 
      #!/usr/bin/env python3
-    """
-    pfSense Firewall Log Decoder - Minimal JSON Format
-    A decoder for pfSense firewall syslog messages received on UDP port 514
-    Outputs only: src_ip, dst_ip, src_port, dst_port, timestamp, protocol, action, direction
-    """
+  
 
     import re
     import socket
