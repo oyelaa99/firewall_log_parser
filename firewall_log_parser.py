@@ -1,30 +1,31 @@
-# firewall_log_parser
+#!/usr/bin/env python3
+"""
+pfSense Firewall Log Decoder - Minimal JSON Format
+A decoder for pfSense firewall syslog messages received on UDP port 514
+Outputs only: src_ip, dst_ip, src_port, dst_port, timestamp, protocol, action, direction
+"""
 
+import re
+import socket
+from datetime import datetime
+from dataclasses import dataclass
+from typing import Optional, Dict, Any
+import json
 
-     #!/usr/bin/env python3
-  
+@dataclass
+class FirewallMessage:
+    """Structured representation of a firewall log message"""
+    timestamp: datetime
+    src_ip: str
+    dst_ip: str
+    src_port: Optional[int]
+    dst_port: Optional[int]
+    protocol: str
+    action: str
+    direction: str
 
-    import re
-    import socket
-    from datetime import datetime
-    from dataclasses import dataclass
-    from typing import Optional, Dict, Any
-    import json
-
-    @dataclass
-    class FirewallMessage:
-        """Structured representation of a firewall log message"""
-        timestamp: datetime
-        src_ip: str
-        dst_ip: str
-        src_port: Optional[int]
-        dst_port: Optional[int]
-        protocol: str
-        action: str
-        direction: str
-    
-    class PfSenseFirewallDecoder:
-        """pfSense firewall log decoder"""
+class PfSenseFirewallDecoder:
+    """pfSense firewall log decoder"""
     
     # Protocol numbers to names
     PROTOCOL_NAMES = {
@@ -160,8 +161,8 @@
         
         return json.dumps(json_output, indent=2, default=str)
 
-    class SyslogServer:
-         """UDP Syslog server for receiving pfSense firewall logs"""
+class SyslogServer:
+    """UDP Syslog server for receiving pfSense firewall logs"""
     
     def __init__(self, host='0.0.0.0', port=514):
         self.host = host
@@ -198,10 +199,10 @@
         if self.socket:
             self.socket.close()
 
-    def main():
+def main():
     """Main function to demonstrate the decoder"""
     # Sample firewall log for testing
-    sample_log = '[192.168.1.1] <134>Jun 18 19:36:03 filterlog[8265]:    6,,,1000000105,em1,match,block,in,6,0x00,0x6cfd7,64,TCP,6,40,fe80::a00:27ff:fede:8853,2620:2d:4000:1010::117,59018,443,0,S,8772409,,64800,,mss;sackOK;TS;nop;wscale'
+    sample_log = '[192.168.1.1] <134>Jun 18 19:36:03 filterlog[8265]: 6,,,1000000105,em1,match,block,in,6,0x00,0x6cfd7,64,TCP,6,40,fe80::a00:27ff:fede:8853,2620:2d:4000:1010::117,59018,443,0,S,8772409,,64800,,mss;sackOK;TS;nop;wscale'
     
     decoder = PfSenseFirewallDecoder()
     
